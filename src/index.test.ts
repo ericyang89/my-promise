@@ -1,7 +1,7 @@
 import MyPromise from "./index";
 
 // 1
-test("executor function is called immediately", function() {
+test("1.promise 参数函数会立即执行", function() {
   var string;
 
   new MyPromise(function() {
@@ -12,8 +12,8 @@ test("executor function is called immediately", function() {
 
 },500);
 
-// 2
-it("resolution handler is called when promise is resolved", function(done) {
+
+it("2. promise 在 then 的回调函数中可以拿到 resolve 的数据。", function(done) {
   var testString = "foo";
 
   var promise = new MyPromise(function(resolve) {
@@ -28,121 +28,122 @@ it("resolution handler is called when promise is resolved", function(done) {
   });
 },500);
 
-// // 3
-// it("promise supports many resolution handlers", function(done) {
-//   var testString = "foo";
+// 3
+it("promise 可以有多个 then，并且会依次执行", function(done) {
+  var testString = "foo";
 
-//   var promise = new MyPromise(function(resolve) {
-//     setTimeout(function() {
-//       resolve(testString);
-//     }, 20);
-//   });
+  var promise = new MyPromise(function(resolve) {
+    setTimeout(function() {
+      resolve(testString);
+    }, 20);
+  });
 
-//   promise.then(function(string) {
-//     expect(string).toBe(testString);
-//   });
+  promise.then(function(string) {
+    expect(string).toBe(testString);
+  });
 
-//   promise.then(function(string) {
-//     expect(string).toBe(testString);
-//     done();
-//   });
-// },500);
+  promise.then(function(string) {
+    expect(string).toBe(testString);
+    done();
+  });
+},500);
 
-// // 4
-// it("resolution handlers can be chained", function(done) {
-//   var testString = "foo";
 
-//   var promise = new MyPromise(function(resolve) {
-//     setTimeout(function() {
-//       resolve();
-//     }, 20);
-//   });
+it("4.promise 可以嵌套多个 then，then的回调中可以返回 promise ", function(done) {
+  var testString = "foo";
 
-//   promise
-//     .then(function() {
-//       return new MyPromise(function(resolve) {
-//         setTimeout(function() {
-//           resolve(testString);
-//         }, 20);
-//       });
-//     })
-//     .then(function(string) {
-//       expect(string).toBe(testString);
-//       done();
-//     });
-// },500);
+  var promise = new MyPromise(function(resolve) {
+    setTimeout(function() {
+      resolve();
+    }, 20);
+  });
 
-// // 5
-// it("chaining works with non-promise return values", function(done) {
-//   var testString = "foo";
+  promise
+    .then(function() {
+      return new MyPromise(function(resolve) {
+        setTimeout(function() {
+          resolve(testString);
+        }, 20);
+      });
+    })
+    .then(function(string) {
+      expect(string).toBe(testString);
+      done();
+    });
+},500);
 
-//   var promise = new MyPromise(function(resolve) {
-//     setTimeout(function() {
-//       resolve();
-//     }, 20);
-//   });
+// 5
+it("5.promise 可以嵌套多个 then，then的回调中可以返回 一个普通值", function(done) {
+  var testString = "foo";
 
-//   promise
-//     .then(function() {
-//       return testString;
-//     })
-//     .then(function(string) {
-//       expect(string).toBe(testString);
-//       done();
-//     });
-// },500);
+  var promise = new MyPromise(function(resolve) {
+    setTimeout(function() {
+      resolve();
+    }, 20);
+  });
 
-// // 6
-// it("resolution handlers can be attached when promise is resolved", function(done) {
-//   var testString = "foo";
+  promise
+    .then(function() {
+      return testString;
+    })
+    .then(function(string) {
+      expect(string).toBe(testString);
+      done();
+    });
+},500);
 
-//   var promise = new MyPromise(function(resolve) {
-//     setTimeout(function() {
-//       resolve(testString);
-//     }, 20);
-//   });
+// 6
+it("6.resolved 状态的promise ，如果调用 then 方法会立即执行", function(done) {
+  var testString = "foo";
 
-//   setTimeout(function() {
-//     promise.then(function(value) {
-//       expect(value).toBe(testString);
-//       done();
-//     });
-//   }, 200);
+  var promise = new MyPromise(function(resolve) {
+    setTimeout(function() {
+      resolve(testString);
+    }, 20);
+  });
 
-//   // promise.then(function() {
-//   //   setTimeout(function() {
-//   //     promise.then(function(value) {
-//   //       expect(value).toBe(testString);
-//   //       done();
-//   //     });
-//   //   }, 200);
-//   // });
+  setTimeout(function() {
+    promise.then(function(value) {
+      expect(value).toBe(testString);
+      done();
+    });
+  }, 200);
 
-// },500);
+  // promise.then(function() {
+  //   setTimeout(function() {
+  //     promise.then(function(value) {
+  //       expect(value).toBe(testString);
+  //       done();
+  //     });
+  //   }, 200);
+  // });
 
-// // 7
-// it("calling resolve second time has no effect", function(done) {
-//   var testString = "foo";
-//   var testString2 = "bar";
+},500);
 
-//   var promise = new MyPromise(function(resolve) {
-//     setTimeout(function() {
-//       resolve(testString);
-//       resolve(testString2);
-//     }, 20);
-//   });
 
-//   promise.then(function(value) {
-//     expect(value).toBe(testString);
+it("7. 二次调用 resolve 不会产生影响。", function(done) {
+  var testString = "foo";
+  var testString2 = "bar";
 
-//     setTimeout(function() {
-//       promise.then(function(value) {
-//         expect(value).toBe(testString);
-//         done();
-//       });
-//     }, 20);
-//   });
-// },500);
+  var promise = new MyPromise(function(resolve) {
+    setTimeout(function() {
+      resolve(testString);
+      resolve(testString2);
+    }, 20);
+  });
+
+  promise.then(function(value) {
+    expect(value).toBe(testString);
+  });
+
+  setTimeout(function() {
+    promise.then(function(value) {
+      expect(value).toBe(testString);
+      done();
+    });
+  }, 50);
+
+},500);
 
 // // 8
 // it("rejection handler is called when promise is rejected", function(done) {
