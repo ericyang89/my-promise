@@ -7,10 +7,13 @@ yarn
 npm test
 ```
 
+https://github.com/ericyang89/my-promise
+
 ## 听众
 1. js 基础
 2. 一定的 ts 基础
 3. 懂得 promise 怎么使用。
+4. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
 ## 意义
 1. 更深的理解 promise 

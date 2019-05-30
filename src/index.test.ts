@@ -102,6 +102,9 @@ it("6.resolved 状态的promise ，如果调用 then 方法会立即执行", fun
     }, 20);
   });
 
+   
+
+
   setTimeout(function() {
     promise.then(function(value) {
       expect(value).toBe(testString);
